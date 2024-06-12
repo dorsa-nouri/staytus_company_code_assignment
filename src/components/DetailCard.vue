@@ -73,6 +73,7 @@
 <script setup>
   import { defineProps } from "vue";
 
+  // our props data from main component
   defineProps({
     title: {
       type: String,
@@ -96,6 +97,7 @@
     },
   });
 
+  // change the date format as the description wants
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { weekday: "short", month: "short", hour12: true };
@@ -105,6 +107,7 @@
       .replace(/\b(\w+)\b/g, (_, p1) => p1.toLowerCase());
   };
 
+  // change and check the type of the population as the description wants
   const formatPopulationType = (num) => {
     const result = Number(num);
     if (isNaN(result)) {
