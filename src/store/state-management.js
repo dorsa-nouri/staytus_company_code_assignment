@@ -1,24 +1,16 @@
-class StateManager {
+class stateManager {
   constructor(initialState) {
     this.state = initialState;
-    this.listeners = new Set();
   }
 
   setState(newState) {
     this.state = newState;
-    this.listeners.forEach((listener) => listener());
-  }
-
-  addListener(listener) {
-    if (!this.listeners.has(listener)) {
-      this.listeners.add(listener);
-      console.log("listener :", listener);
-    }
+    console.log("our New state : ", this.state);
   }
 
   dispatch(action) {
     switch (action.type) {
-      case "UPDATE_STATE":
+      case "FILL_STATE":
         this.setState(action.payload);
         break;
       default:
@@ -27,4 +19,4 @@ class StateManager {
   }
 }
 
-export default StateManager;
+export default stateManager;

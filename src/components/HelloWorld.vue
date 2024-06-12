@@ -1,57 +1,51 @@
 <template>
   <div id="app">
-    <h2>{{ state.count }}</h2>
-    <button
-      @click="stateUpdate()"
-      :loading="loading"
+    <div v-if="isLoading">Loading...</div>
+    <div
+      v-else
+      v-for="(i, index) in state"
+      :key="index"
     >
-      counter
-    </button>
+      <DetailCard
+        :title="i.name"
+        :caption="i.films"
+        :created-date="i.created"
+        :climate="i.climate"
+      ></DetailCard>
+    </div>
+
+    {{ state[0] }}
   </div>
 </template>
 
 <script setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
+  import DetailCard from "@/components/DetailCard.vue";
   import StateManager from "@/store/state-management";
+  import getReptilePlanets from "@/store/movie";
 
-  const loading = ref(false);
-  let state = ref({
-    count: 0,
-  });
+  let state = ref({});
+  let isLoading = ref(true);
 
   const stateManager = new StateManager(state);
 
-  function stateUpdate() {
-    loading.value = true;
-    // Update the state
-    stateManager.dispatch({
-      type: "UPDATE_STATE",
-      payload: { count: state.value.count + 5 },
-    });
-    // Listen for state changes
-    stateManager.addListener(() => {
-      console.log("State updated:", stateManager.state);
-    });
-    state.value.count = stateManager.state.count;
-
-    loading.value = false;
+  async function getMovie() {
+    try {
+      state.value = await getReptilePlanets();
+      stateManager.dispatch({
+        type: "FILL_STATE",
+        payload: state.value,
+      });
+    } catch (error) {
+      console.error("Error fetching movie data:", error);
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  onMounted(() => {
+    getMovie();
+  });
 </script>
 
-<style scoped>
-  .card {
-    border-radius: 10px;
-    background-color: #f3f3f3;
-    transition: box-shadow 0.3s ease-in-out;
-    width: 98vw;
-  }
-
-  .rounded-avatar {
-    display: flex;
-    align-items: center;
-  }
-
-  .card-title h2 {
-    padding: 10px 0;
-  }
-</style>
+<style scoped></style>
